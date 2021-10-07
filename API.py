@@ -9,14 +9,20 @@ api = Api(app)
 class ApiHandler(Resource):
     @staticmethod
     def get():
-        parser = reqparse.RequestParser()
-        parser.add_argument('input', required=True)
-        args = parser.parse_args()
         data = {
             'success': False,
             'message': '',
             'data': {}
         }
+        parser = reqparse.RequestParser()
+        try:
+            parser.add_argument('input', required=True)
+        except:
+            data['success'] = False
+            data['message'] = 'No argument passed'
+            return data, 400
+        args = parser.parse_args()
+
         try:
             splitter = Splitter(args['input']).start_split()
             data['success'] = True
